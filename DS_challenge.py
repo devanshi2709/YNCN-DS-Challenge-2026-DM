@@ -11,28 +11,12 @@ attendances = [] #list of number of attendances in an event
 top_five_attendances = [] #highest attendances
 top_five_events = [] #top five event ID's
 top_five_event_names = [] #names of the top five events
-event_performance = {}
 
 #opening the file
 with open('DS_challenge_dataset.json') as ds:
     data = json.load(ds)
 
 records = data["records"]
-
-#helper function for scoring
-
-def scoring(record):
-    name = record.get("event_name")
-    att = record.get("attendance")
-    no_shows = record.get("no_show_count")
-
-    total_invited = att + no_shows
-    # Success Rate calculation
-    if total_invited > 0:
-        score = (att / total_invited * 100)
-    else:
-        score = 0
-    return name, score
 
 #disclaimer:  #the try: and except: was taken from chatgpt, this is the first time I am using it in my code and I learnt this while doing this challenge.
 
@@ -58,6 +42,15 @@ for events in records:
     events["attendance"] = clean_value #updates the cleaned values into the dictionary
 
 
+for record in records:
+    event_type = record.get("event_type")
+    count = record.get("new_attendees")
+    if count is None:
+            count = 0
+    
+    event_type_new_attendees[event_type] = event_type_new_attendees.get(event_type) + count
+
+
 #for creating a new dictionary based on event id and its attendance
 for event in records:
     event_id_attendees.update({event["event_id"]: event["attendance"]})
@@ -71,30 +64,25 @@ attendances = sorted(list(event_attendees.values()))
 for i in range(len(attendances)-1, len(attendances)-6, -1):
     top_five_attendances.append(attendances[i])
 
-for num in top_five_attendances:
-    for id, att in event_attendees.items():
-        if att == num and id not in top_five_events:
-            top_five_events.append(id)
-
+for numbers in top_five_attendances:
+    for i, j in event_attendees.items():
+        if j == numbers:
+            if len(top_five_event_names) < 5:
+                if i not in top_five_events:
+                    top_five_events.append(i)
 
 for event_record in records:
     for i in top_five_events:
         if i == event_record["event_id"]:
-            name, score = scoring(event_record)
-
-            event_performance[i] = {"name": name, "score": score}
-            
-            if name not in top_five_event_names:
-                top_five_event_names.append(name)
-
-
+            top_five_event_names.append(event_record["event_name"])
 
 print("The top 5 events were:")
 
+
 for i in range(5):
-    id = top_five_events[i]
-    name = event_performance[id]["name"]
-    print(event_performance[top_five_events[i]])
+    name = top_five_event_names[i]
+    
+    print(f"{i+1}. {name}")
 
 
 
