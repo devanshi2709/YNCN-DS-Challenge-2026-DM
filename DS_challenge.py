@@ -48,7 +48,11 @@ for record in records:
     if count is None:
             count = 0
     
-    event_type_new_attendees[event_type] = event_type_new_attendees.get(event_type) + count
+    if event_type in event_type_new_attendees:
+        event_type_new_attendees[event_type] += count
+  
+    else:
+        event_type_new_attendees[event_type] = count
 
 
 #for creating a new dictionary based on event id and its attendance
@@ -82,7 +86,11 @@ print("The top 5 events were:")
 for i in range(5):
     name = top_five_event_names[i]
     
-    print(f"{i+1}. {name}")
+    print(f"{name}")
+
+print("New Attendees by Event Type:")
+for category, total in event_type_new_attendees.items():
+    print(f"{category}: {total}")
 
 
 
@@ -93,16 +101,32 @@ for i in range(5):
 """
 Which 5 events had the highest attendance?
 Answer:
-
+Volunteer Day
+Community Picnic
+Winter Kickoff
+Women in Leadership Panel
+Design Thinking Lab
 
 
 How many new attendees were there by event type?
 Answer:
-
+Talk: 538
+Social: 536
+Panel: 821
+Forum: 709
+Workshop: 949
+Networking: 854
+Roundtable: 768
+Work Shop: 62
 
 
 What data quality issues exist in the dataset, and how would you handle them before analyzing attendance?
 Answer: 
+
+1) A lot of the values of the attendance numbers were in different data types, such as None and negative integers, so I would convert them to integers before moving ahead
+2) some event categories had mismatched spellings and capital errors, so I would make sure that they are all of the same formatting before moving to analyse them
+3) some events were missing a location, so I would ensure that they are handled correctly
+4) not all sub dictionaries have the same number of keys, so using get method with default values is a good idea to move forward
 
 
 
